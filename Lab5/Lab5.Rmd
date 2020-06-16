@@ -1,0 +1,127 @@
+---
+title: "Lab5"
+author: "Jason Myers"
+date: "6/16/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Task 
+
+## Task 1
+
+```{r}
+getwd()
+```
+
+## Task 2
+
+```{r}
+mybin=function(iter=100,n=10, p=0.5){
+# make a matrix to hold the samples
+#initially filled with NA's
+sam.mat=matrix(NA,nr=n,nc=iter, byrow=TRUE)
+#Make a vector to hold the number of successes in each trial
+succ=c()
+for( i in 1:iter){
+#Fill each column with a new sample
+sam.mat[,i]=sample(c(1,0),n,replace=TRUE, prob=c(p,1-p))
+#Calculate a statistic from the sample (this case it is the sum)
+succ[i]=sum(sam.mat[,i])
+}
+#Make a table of successes
+succ.tab=table(factor(succ,levels=0:n))
+#Make a barplot of the proportions
+barplot(succ.tab/(iter), col=rainbow(n+1), main="Binomial simulation", xlab="Number of successes")
+succ.tab/iter
+}
+mybin(iter=100,n=10, p=0.7)
+mybin(iter=200,n=10, p=0.7)
+mybin(iter=500,n=10, p=0.7)
+mybin(iter=1000,n=10, p=0.7)
+mybin(iter=10000,n=10, p=0.7)
+d <- round(dbinom(0:10,10,.7),4)
+
+```
+     0      1      2      3      4      5      6      7      8 
+0.0000 0.0001 0.0009 0.0099 0.0357 0.1048 0.1986 0.2679 0.2355 
+     9     10 \
+0.1194 0.0272 \
+The table of the follow function is `r d`\
+
+## Task 3
+```{r}
+d <- rbinom(20, 1, 0.6)
+sample(d,size=5, replace=FALSE)
+sample(c(1,0),size=5,prob=c(.6,.4), replace=TRUE)
+myhyper=function(iter=100,N=20,r=12,n=5){
+# make a matrix to hold the samples
+#initially filled with NA's
+sam.mat=matrix(NA,nr=n,nc=iter, byrow=TRUE)
+#Make a vector to hold the number of successes over the trials
+succ=c()
+for( i in 1:iter){
+#Fill each column with a new sample
+sam.mat[,i]=sample(rep(c(1,0),c(r,N-r)),n,replace=FALSE)
+#Calculate a statistic from the sample (this case it is the sum)
+succ[i]=sum(sam.mat[,i])
+}
+#Make a table of successes
+succ.tab=table(factor(succ,levels=0:n))
+#Make a barplot of the proportions
+barplot(succ.tab/(iter), col=rainbow(n+1), main="HYPERGEOMETRIC simulation", xlab="Number of successes")
+succ.tab/iter
+}
+myhyper(iter=100,n=5, N=20,r=12)
+myhyper(iter=200,n=5, N=20,r=12)
+myhyper(iter=500,n=5, N=20,r=12)
+myhyper(iter=1000,n=5, N=20,r=12)
+myhyper(iter=10000,n=5, N=20,r=12)
+d <- round(dhyper(x=0:5, m=12, n=8, k=5),4)
+```
+    0     1     2     3     4     5 \
+0.004 0.056 0.249 0.396 0.247 0.048 \
+`r d`\
+
+## Task 4
+
+The function creates a sample based on how large the user wants but the spread or range is lock between 1 and 10. Loop through selecting random numbers and store them into a level or bin. Then prints the result to the screen
+```{r}
+mysample=function(n, iter=10,time=0.5){
+  for( i in 1:iter){
+    #make a sample
+    s=sample(1:10,n,replace=TRUE)
+    # turn the sample into a factor
+    sf=factor(s,levels=1:10)
+    #make a barplot
+    barplot(table(sf)/n,beside=TRUE,col=rainbow(10),
+            main=paste("Example sample()", " iteration ", i, " n= ", n,sep="") ,
+            ylim=c(0,0.2)
+    )
+
+    #release the table
+    Sys.sleep(time)
+  }
+}
+
+v <- mysample(n=1000, iter=30, time = 1)
+```
+The graph show the different number selection during the running of the function. It show mostly and even distrubition over the entire running time
+
+
+## Task 5
+
+```{r}
+v <- choose(8,4)
+d <- 1-ppois(3,4)
+c <- choose(9,2)*.4^3*.6^(10-3)
+q<-dnbinom(x=10-3,size=3,.4)
+w <- pnbinom(7,15,.4)
+```
+The Binomial $\binom{8}{4}$ = `r v`\
+P(Y>4),Y~Pois($\lambda$ = 2) = `r d`\
+p(Y=10),Y~negBin(p = 0.4, r = 3) = `r c` = `r q`\
+p($Y\le 8$), Y~Bin(n=15,p=.4) = `r w`\
